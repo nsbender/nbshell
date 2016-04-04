@@ -20,6 +20,7 @@ CommandLine::CommandLine(istream& in){
 
 	//assigns cin string to "input"
 	getline(in, input);
+	rawInput = input;
 	//looks and finds '&' in input string.
 	size_t found = input.find("&");
 	if (found!=string::npos){
@@ -74,6 +75,10 @@ char** CommandLine::getArgVector() const {
 char* CommandLine::getArgVector(int i){
 	//Return argument of the command contained at the specified index
 	return ARGV[i];
+}
+
+string CommandLine::getRawInput(){
+	return rawInput;
 }
 
 bool CommandLine::Ampersand() const {

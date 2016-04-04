@@ -22,6 +22,7 @@
 #include "Path.h"
 #include "Prompt.h"
 #include "CommandLine.h"
+#include "History.h"
 
 using namespace std;
 

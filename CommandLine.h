@@ -28,11 +28,13 @@ public:
 	int getArgCount() const;
 	char** getArgVector() const;
 	char* getArgVector(int i);
+	string getRawInput();
 	bool Ampersand() const;
 	virtual ~CommandLine();
 
 private:
-	string input;
+	string rawInput = "";
+	string input = "";
 	int argc = 0;
 	bool ifAmpersand;
 	char* argv;

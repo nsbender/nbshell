@@ -16,6 +16,8 @@ NBShell::NBShell() {
 void NBShell::run() {
 	Prompt * prompt = new Prompt();
 	Path * path = new Path();
+	History * history = new History();
+
 	while (true){
 		cout << (prompt -> get()) << "$ " << flush;
 		CommandLine * cmd = new CommandLine(cin);
@@ -25,17 +27,30 @@ void NBShell::run() {
 			continue;
 		}
 
+		else if ((string)cmd -> getCommand() == "history"){
+			history -> add(cmd -> getRawInput());
+			if ((cmd -> getArgCount() > 1)&&(string)(cmd -> getArgVector(1)) == 
+"-c"){
+				history -> clear();
+			}
+			else{
+				history -> getAll();
+			}
+		}
+
 		else if ((string)cmd -> getCommand() == "cd"){
 			struct stat st;
 			if (stat((cmd->getArgVector(1)), &st) == 0 && S_ISDIR(st.st_mode)) //Check to make sure the directory exists
 			{
 				chdir(cmd->getArgVector(1)); //Tell the system to change the current working directory
 				prompt->update();
+				history->add(cmd->getRawInput());
 				cmd->~CommandLine(); // Destroy the CommandLine after it is done and restart the loop.
 				continue;
 			}
 			else {
 				cout << "No such directory!" << endl;
+				history->add(cmd->getRawInput());
 				cmd->~CommandLine();
 				continue;
 			}
@@ -47,11 +62,13 @@ void NBShell::run() {
 
 		else if ((string)cmd -> getCommand() == "pwd"){
 			cout << prompt->get() << endl;
+			history->add(cmd->getRawInput()); 
 			cmd->~CommandLine();
 			continue;
 		}
 
 		else{
+			history -> add(cmd -> getRawInput());
 			int status = path -> find((string)cmd -> getCommand());
 			if (status != -1 ){ // After checking that the program exists...
 				pid_t pid;
@@ -78,7 +95,7 @@ void NBShell::run() {
 			}
 			else{
 				cout << "Command not found." << endl;
-			}
+			} 
 		}
 	}
 }
